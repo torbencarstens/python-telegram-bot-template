@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: template-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: template-bot
+  template:
+    metadata:
+      labels:
+        app: template-bot
+    spec:
+      containers:
+      - name: template-bot
+        image: torbencarstens/python-template-bot:{{DOCKER_TAG}}
+        imagePullPolicy: Always
+        envFrom:
+          - secretRef:
+              name: template-bot-secrets
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: template-bot-secrets
+type: Opaque
+data:
+  BOT_TOKEN: "{{BOT_TOKEN}}"
