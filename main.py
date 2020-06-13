@@ -86,13 +86,22 @@ def start(bot_token: str):
 if __name__ == "__main__":
     import json
 
-    with open("secrets.json") as f:
-        content = json.load(f)
-        token = content['token']
-        try:
-            sentry_dsn = content['sentry_dsn']
-        except KeyError:
-            sentry_dsn = None
+    raw_token = os.getenv("BOT_TOKEN") 
+    token = raw_token.strip() if raw_token else None
+    if not token and os.path.exists("secrets.json"):
+        with open("secrets.json") as f:
+            content = json.load(f)
+            token = content.get('token', os.getenv("BOT_TOKEN"))
+            if not token:
+                raise ValueError("`token` not defined, either set `BOT_TOKEN` or `token` in `secrets.json`")
+
+            try:
+                sentry_dsn = content['sentry_dsn']
+            except KeyError:
+                sentry_dsn = None
+
+    if not token:
+        raise ValueError("No token has been specified")
 
     sentry_sdk.init(sentry_dsn)
 
