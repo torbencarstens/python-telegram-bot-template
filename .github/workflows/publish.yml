@@ -24,7 +24,7 @@ jobs:
           args: kubernetes cluster kubeconfig show torbencarstens > $GITHUB_WORKSPACE/.kubeconfig
       - name: update BOT_TOKEN
         run: sed -i -e "s/{{BOT_TOKEN}}/${{ secrets.BOT_TOKEN }}/g" .kubernetes/manifest.yaml
-      - name: update SENTRY_DSN
+      - name: update DOCKER_TAG
         run: sed -i -e "s/{{DOCKER_TAG}}/${{steps.vars.outputs.tag}}/g" .kubernetes/manifest.yaml
       - name: update image tag
         run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig apply -f .kubernetes/manifest.yaml
